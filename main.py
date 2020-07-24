@@ -1,3 +1,4 @@
+import api
 from data import db_session
 from flask import Flask, render_template
 
@@ -16,4 +17,6 @@ def index():
 
 if __name__ == "__main__":
     db_session.global_init("db/database.sqlite")
+    app.register_blueprint(api.api)
     app.run(host="127.0.0.1", port=8080)
+
