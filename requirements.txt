@@ -62,7 +62,6 @@ pytest==5.4.1
 python-dateutil==2.8.1
 python-jsonrpc-server==0.3.4
 python-language-server==0.31.7
-python-telegram-bot==12.6.1
 pytils==0.3
 requests==2.22.0
 rope==0.16.0
@@ -76,7 +75,6 @@ sympy==1.5.1
 tornado==6.0.4
 urllib3==1.25.8
 user-agent==0.1.9
-vk-api==11.8.0
 wcwidth==0.1.9
 weblib==0.1.30
 websockets==8.1
