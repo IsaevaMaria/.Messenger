@@ -1,5 +1,6 @@
 import api
 from data import db_session
+from data.forms import *
 from flask import Flask, render_template
 
 app = Flask(__name__)
@@ -15,8 +16,16 @@ def index():
     return render_template("base.html")
 
 
+@app.route("/registration", methods=('GET', 'POST'))
+def registration():
+    session = db_session.create_session()
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        pass  # TODO
+    return render_template("registration.html", form=form)
+
+
 if __name__ == "__main__":
     db_session.global_init("db/database.sqlite")
     app.register_blueprint(api.api)
-    app.run(host="127.0.0.1", port=8080)
-
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
