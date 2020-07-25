@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
+{% if message != "" %}
+    <div style="width: 20em; border-radius: 25px; background-color: #ffafaf">
+        <h5>{{ message }}</h5>
+    </div>
+{% endif %}
 <form method="post" novalidate enctype = "multipart/form-data">
     {{ form.hidden_tag() }}
     <div class="form-group">
@@ -17,7 +22,7 @@
     <div class="form-group">
         <label for="confirm-password"> {{ form.confirm_password.label }}</label>
         {{ form.confirm_password(class="form-control", id="confirm-password", type="password") }}
-    </div>
-    {{ form.submit(class="btn btn-warning") }}
+    </div><br/>
+    {{ form.submit(class="btn btn-warning button-primary") }}
 </form>
 {% endblock %}

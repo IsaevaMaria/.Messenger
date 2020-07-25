@@ -10,5 +10,6 @@ class FriendsMessages(SqlAlchemyBase, SerializerMixin):
     id = sa.Column('id', sa.Integer, autoincrement=True, primary_key=True)
     id_user_from = sa.Column('id_user_from', sa.Integer)
     id_user_to = sa.Column('id_user_to', sa.Integer)
-    id_message = sa.Column('id_message', sa.Integer, sa.ForeignKey("messages.id"), nullable=True)
+    id_message = sa.Column('id_message', sa.Integer, sa.ForeignKey("messages.id"))
+
     messages = sa.orm.relation("Messages", foreign_keys=[id_message])

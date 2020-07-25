@@ -4,20 +4,20 @@ from wtforms.validators import DataRequired
 
 
 class RegistrationForm(FlaskForm):
-    login = StringField("Логин (email)", validators=[DataRequired()])
-    password = PasswordField("Пароль", validators=[DataRequired()])
-    confirm_password = PasswordField("Повтор пароля", validators=[DataRequired()])
-    nickname = StringField("Название аккаунта", validators=[DataRequired()])
+    login = StringField("Логин (email)")
+    password = PasswordField("Пароль")
+    confirm_password = PasswordField("Повтор пароля")
+    nickname = StringField("Название аккаунта")
     submit = SubmitField("Отправить")
 
 
 class LoginForm(FlaskForm):
-    login = StringField("Логин (email)", validators=[DataRequired()])
-    password = PasswordField("Пароль", validators=[DataRequired()])
+    login = StringField("Логин (email)")
+    password = PasswordField("Пароль")
     remember = BooleanField("Запомнить в системе", default=False)
     submit = SubmitField("Войти")
 
 
 class PasswordRecoveryForm(FlaskForm):
-    login = StringField("Логин (email)", validators=[DataRequired()])
+    login = StringField("Логин (email)")
     submit = SubmitField("Войти")
