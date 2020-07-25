@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
+<header>
+    {% if current_user.is_authenticated %}
+    <a href="/logout"><input type="button" value="Выйти"></a>
+    {% else %}
+    <a href="/registration"><input type="button" value="Регистрация"></a>
+    <a href="/login"><input type="button" value="Вход"></a>
+    {% endif %}
+</header>
 <body>
 {% block content %}{% endblock %}
 </body>
