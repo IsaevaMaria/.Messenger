@@ -12,8 +12,8 @@ class Users(SqlAlchemyBase, UserMixin, SerializerMixin):
     id = sa.Column('id', sa.Integer, autoincrement=True, primary_key=True)
     name = sa.Column('name', sa.String)
     email = sa.Column('email', sa.String, unique=True)
-    status = sa.Column('status', sa.String, nullable=True)
-    about = sa.Column('about', sa.String, nullable=True)
+    status = sa.Column('status', sa.Boolean, default=False)
+    about = sa.Column('about', sa.String, default="")
     password = sa.Column('hashed_password', sa.String)
 
     users_to_chats = sa.orm.relation('UsersToChats')

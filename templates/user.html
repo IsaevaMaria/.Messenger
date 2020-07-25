@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="eleven columns"><h5>Аккаунт пользователя: {{ user.name }}</h5></div>
+        <div class="one column">{% if user.status %} online {% else %} offline {% endif %}</div>
+    </div><br/>
+    <label>Информация о себе: </label>
+    <div style="width: 35em;">
+        {% if user.about != "" %} {{ user.about }} {% else %} Пользователь не указал о себе никакой информации. {% endif %}
+    </div><br/>
+    {% if pair is false %}
+        {% if invitation is not false %}
+            <a href="/accept_friend/{{ invitation.id }}"><input type="submit" value="Принять заявку в друзья" class="button-primary"></a>
+        {% else %}
+            <a href="/add_friend/{{ user.id }}"><input type="submit" value="Добавить в друзья" class="button-primary"></a>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

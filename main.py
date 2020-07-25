@@ -1,10 +1,10 @@
 import os
 import api
 from data.forms import *
-from sqlalchemy import or_
 from data import db_session
 from data.__all_models import *
-from flask import Flask, render_template, redirect
+from sqlalchemy import or_, and_
+from flask import Flask, render_template, redirect, request
 from flask_login import login_user, logout_user, current_user, LoginManager, login_required
 
 app = Flask(__name__)
@@ -86,6 +86,58 @@ def friend():
                     else pair.id_second_user for pair in friends_list]
     friends_list = [session.query(users.Users).get(user) for user in friends_list]
     return render_template("friends.html", friends_list=friends_list)
+
+
+@app.route("/user/<int:user_id>")
+@login_required
+def user_page(user_id):
+    user = session.query(users.Users).get(user_id)
+    if user is None:
+        return render_template("error_handler.html", message="Пользователя с таким ID не существует")
+    pair = session.query(friends.Friends).filter(
+        or_(and_(friends.Friends.id_first_user == current_user.id, friends.Friends.id_second_user == user_id),
+            and_(friends.Friends.id_first_user == user_id, friends.Friends.id_second_user == current_user.id))
+    ).first()
+    pair = False if pair is None else True
+    invitation = session.query(friends_invitations.FriendsInv).filter(
+        or_(and_(friends_invitations.FriendsInv.id_first_user == current_user.id,
+                 friends_invitations.FriendsInv.id_second_user == user_id),
+            and_(friends_invitations.FriendsInv.id_first_user == user_id,
+                 friends_invitations.FriendsInv.id_second_user == current_user.id))).first()
+    invitation = invitation if invitation is not None else False
+    return render_template("user.html", user=user, pair=pair, invitation=invitation)
+
+
+@app.route("/account")
+@login_required
+def account():
+    pass  # TODO
+
+
+@app.route("/add_friend/<int:user_id>")
+@login_required
+def add_friend(user_id):
+    past = request.headers.environ["HTTP_REFERER"]
+    new_friend_invitation = friends_invitations.FriendsInv()
+    new_friend_invitation.id_first_user = current_user.id
+    new_friend_invitation.id_second_user = user_id
+    session.add(new_friend_invitation)
+    session.commit()
+    return redirect(past)
+
+
+@app.route("/accept_friend/<int:invitation_id>")
+@login_required
+def accept_friend(invitation_id):
+    past = request.headers.environ["HTTP_REFERER"]
+    invitation = session.query(friends_invitations.FriendsInv).get(invitation_id)
+    new_friendship = friends.Friends()
+    new_friendship.id_second_user = invitation.id_second_user
+    new_friendship.id_first_user = current_user.id
+    session.add(new_friendship)
+    session.delete(invitation)
+    session.commit()
+    return redirect(past)
 
 
 if __name__ == "__main__":

@@ -10,6 +10,4 @@ class FriendsInv(SqlAlchemyBase, SerializerMixin):
     id = sa.Column('id', sa.Integer, autoincrement=True, primary_key=True)
     id_first_user = sa.Column('id_first_user', sa.Integer)
     id_second_user = sa.Column('id_second_user', sa.Integer)
-    status = sa.Column('status', sa.Integer, nullable=True)
     date = sa.Column('date', sa.DateTime, nullable=True)
-

@@ -3,7 +3,7 @@
 {% for friend in friends_list %}
     <div class="container">
         <div class="row">
-            <button class="twelve columns" style="border: 1px solid #aaaaff; height: 4em; font-size: 150%;" onclick="document.location.href = '/friend/{{ friend.id }}';">
+            <button class="twelve columns" style="border: 1px solid #aaaaff; height: 4em; font-size: 150%;" onclick="document.location.href = '/user/{{ friend.id }}';">
                 {{ friend.name }}
             </button>
         </div>
