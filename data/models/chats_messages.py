@@ -1,4 +1,5 @@
 import sqlalchemy as sa
+from data.models.chats_messages_from_users import chats_messages_from_users as cmfu
 from data.db_session import SqlAlchemyBase
 from sqlalchemy_serializer import SerializerMixin
 
@@ -13,4 +14,4 @@ class ChatsMessages(SqlAlchemyBase, SerializerMixin):
     date = sa.Column('date', sa.DateTime, nullable=True)
 
     chats = sa.orm.relation("Chats", foreign_keys=[id_chat])
-    chats_messages_from_users = sa.orm.relation("ChatsMessagesFromUsers")
+    users = sa.orm.relation("Users", secondary=cmfu)

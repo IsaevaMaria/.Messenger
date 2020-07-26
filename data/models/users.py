@@ -1,4 +1,6 @@
 import sqlalchemy as sa
+from data.models.chats_messages_from_users import chats_messages_from_users as cmfu
+from data.models.users_to_chats import users_to_chats as utc
 from data.db_session import SqlAlchemyBase
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -16,9 +18,9 @@ class Users(SqlAlchemyBase, UserMixin, SerializerMixin):
     about = sa.Column('about', sa.String, default="")
     password = sa.Column('hashed_password', sa.String)
 
-    users_to_chats = sa.orm.relation('UsersToChats')
+    chats_messages = sa.orm.relation('ChatsMessages', secondary=cmfu)
     chats_invitations = sa.orm.relation('ChatsInv')
-    chats_messages_from_users = sa.orm.relation('ChatsMessagesFromUsers')
+    chats = sa.orm.relation("Chats", secondary=utc)
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
