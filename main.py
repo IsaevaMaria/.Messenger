@@ -105,7 +105,11 @@ def user_page(user_id):
             and_(friends_invitations.FriendsInv.id_first_user == user_id,
                  friends_invitations.FriendsInv.id_second_user == current_user.id))).first()
     invitation = invitation if invitation is not None else False
-    return render_template("user.html", user=user, pair=pair, invitation=invitation)
+    if invitation is not False:
+        sender = True if invitation.id_first_user == current_user.id else False
+    else:
+        sender = False
+    return render_template("user.html", user=user, pair=pair, invitation=invitation, sender=sender)
 
 
 @app.route("/account")
@@ -129,14 +133,18 @@ def add_friend(user_id):
 @app.route("/accept_friend/<int:invitation_id>")
 @login_required
 def accept_friend(invitation_id):
-    past = request.headers.environ["HTTP_REFERER"]
+    try:
+        past = request.headers.environ["HTTP_REFERER"]
+    except KeyError:
+        return render_template("error_handler.html", message="У вас недостаточно прав")
     invitation = session.query(friends_invitations.FriendsInv).get(invitation_id)
-    new_friendship = friends.Friends()
-    new_friendship.id_second_user = invitation.id_second_user
-    new_friendship.id_first_user = current_user.id
-    session.add(new_friendship)
-    session.delete(invitation)
-    session.commit()
+    if invitation is not None and invitation.id_first_user != current_user:
+        new_friendship = friends.Friends()
+        new_friendship.id_second_user = invitation.id_second_user
+        new_friendship.id_first_user = invitation.id_first_user
+        session.add(new_friendship)
+        session.delete(invitation)
+        session.commit()
     return redirect(past)
 
 

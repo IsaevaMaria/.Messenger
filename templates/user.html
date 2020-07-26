@@ -11,7 +11,9 @@
     </div><br/>
     {% if pair is false %}
         {% if invitation is not false %}
+            {% if sender is false %}
             <a href="/accept_friend/{{ invitation.id }}"><input type="submit" value="Принять заявку в друзья" class="button-primary"></a>
+            {% endif %}
         {% else %}
             <a href="/add_friend/{{ user.id }}"><input type="submit" value="Добавить в друзья" class="button-primary"></a>
         {% endif %}
