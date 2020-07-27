@@ -1,5 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
+{% if invitations_list is not false %}
+<label>
+    Заявки в друзья
+</label>
+{% for invitation in invitations_list %}
+    <div class="container">
+        <div class="row">
+            <button class="twelve columns" style="border: 1px solid #aaaaff; height: 4em; font-size: 150%;" onclick="document.location.href = '/accept_friend/{{ invitation.id }}';">
+                {{ invitation.name }}
+            </button>
+        </div>
+    </div>
+{% endfor %}
+<label>
+    Сообщения
+</label>
+{% endif %}
 {% for friend in friends_list %}
     <div class="container">
         <div class="row">

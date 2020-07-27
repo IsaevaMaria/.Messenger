@@ -85,7 +85,15 @@ def friend():
     friends_list = [pair.id_first_user if pair.id_first_user != current_user.id
                     else pair.id_second_user for pair in friends_list]
     friends_list = [session.query(users.Users).get(user) for user in friends_list]
-    return render_template("friends.html", friends_list=friends_list)
+    invitations_list = session.query(friends_invitations.FriendsInv).filter(friends_invitations.FriendsInv.id_second_user == current_user.id).all()
+    invitations = []
+    for invitation in invitations_list:
+        friend_id = invitation.id_first_user if invitation.id_first_user != current_user.id else invitation.id_second_user
+        friend_name = session.query(users.Users).get(friend_id).name
+        invitations += [{"id": invitation.id, "name": friend_name}]
+    if len(invitations) == 0:
+        invitations = False
+    return render_template("friends.html", friends_list=friends_list, invitations_list=invitations)
 
 
 @app.route("/user/<int:user_id>")
