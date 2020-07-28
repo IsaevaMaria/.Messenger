@@ -21,3 +21,8 @@ class LoginForm(FlaskForm):
 class PasswordRecoveryForm(FlaskForm):
     login = StringField("Логин (email)")
     submit = SubmitField("Войти")
+
+
+class ChatInputForm(FlaskForm):
+    text = StringField("Ваше сообщение")
+    submit = SubmitField("Отправить")

@@ -1,5 +1,6 @@
 import os
 import api
+import datetime
 from data.forms import *
 from data import db_session
 from data.__all_models import *
@@ -154,6 +155,29 @@ def accept_friend(invitation_id):
         session.delete(invitation)
         session.commit()
     return redirect(past)
+
+
+@app.route("/chats")
+@login_required
+def user_chats():
+    return render_template("chats.html", chats=current_user.chats)
+
+
+@app.route("/chat/<int:chat_id>", methods=["POST", "GET"])
+@login_required
+def user_chat(chat_id):
+    chat = session.query(chats.Chats).get(chat_id)
+    messages = sorted(chat.chats_messages, key=lambda x: x.date)
+    form = ChatInputForm()
+    if form.validate_on_submit():
+        new_message = chats_messages.ChatsMessages()
+        new_message.id_chat = chat.id
+        new_message.text = form.text.data
+        new_message.date = datetime.datetime.utcnow()
+        session.add(new_message)
+        session.commit()
+        return redirect(f"/chat/{chat_id}")
+    return render_template("user_chat.html", chat=chat, messages=messages, form=form)
 
 
 if __name__ == "__main__":
