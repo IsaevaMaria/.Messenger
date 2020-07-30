@@ -1,34 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <link rel="stylesheet" type="text/css" href="/static/css/skeleton.css">
-    <link rel="stylesheet" type="text/css" href="/static/css/normalize.css">
+    <link href="https://fonts.googleapis.com/css2?family=Yanone+Kaffeesatz:wght@469&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
-<header>
-    <div align="center">
-        <a href="/" style="text-decoration: none; color: #000 !important;"><h1>Messenger</h1></a>
-        {% if current_user.is_authenticated %}
-        <a href="/friends"><input type="button" value="Друзья"></a>
-        <a href="/logout"><input type="button" value="Выйти"></a>
-        {% else %}
-        <a href="/registration"><input type="button" value="Регистрация"></a>
-        <a href="/login"><input type="button" value="Вход"></a>
-        {% endif %}
-    </div><br/>
-</header>
-<body>
-<div align="center">
-    {% block content %}
-    {% if current_user.is_authenticated %}
-<!--    <div class="container">-->
-<!--        <div class="row">-->
-<!--            <div class="twelve columns" style="background-color: #eeeeee;">Eleven<br/>Test</div>-->
-<!--        </div>-->
-<!--    </div>--> <!-- Это всё для вывода сообщений.-->
-    {% endif %}
-    {% endblock %}
-</div>
-</body>
+    <body bgcolor="#FFD08A">
+        <div class="main_panel">
+            <img class="cat" src="/static/pictures/cat-minimal.png" alt="">
+            <form class="authorization_form">
+                <input type="text" for="email" placeholder="Email" class="login">
+                <input type="text" for="password" placeholder="Пароль" class="login">
+                <button id="login_button">Войти</button>
+                <button id="forgot_button">Забыли пароль?</button>
+            </form>
+            <form class="registration_form">
+                <h1 class="Upper">Регистрация</h1>
+                <input type="text" for="name" placeholder="Имя" class="registration">
+                <input type="text" for="secondname" placeholder="Фамилия" class="registration">
+                <button id="registration_button">Продолжить регистрацию</button>
+            </form>
+        </div>
+    </body>
 </html>
