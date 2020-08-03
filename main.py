@@ -5,7 +5,7 @@ from data.forms import *
 from data import db_session
 from data.__all_models import *
 from sqlalchemy import or_, and_
-from flask import Flask, render_template, redirect, request
+from flask import Flask, render_template, redirect, request, jsonify
 from flask_login import login_user, logout_user, current_user, LoginManager, login_required
 
 app = Flask(__name__)
@@ -38,7 +38,7 @@ def index():
 def registration():
     form = RegistrationForm()
     if form.validate_on_submit():
-        if form.password.data == "" or form.login.data == "" or form.confirm_password.data == ""\
+        if form.password.data == "" or form.login.data == "" or form.confirm_password.data == "" \
                 or form.nickname.data == "":
             return render_template("registration.html", form=form, message="Заполните все поля")
         if form.password.data != form.confirm_password.data:
@@ -86,7 +86,8 @@ def friend():
     friends_list = [pair.id_first_user if pair.id_first_user != current_user.id
                     else pair.id_second_user for pair in friends_list]
     friends_list = [session.query(users.Users).get(user) for user in friends_list]
-    invitations_list = session.query(friends_invitations.FriendsInv).filter(friends_invitations.FriendsInv.id_second_user == current_user.id).all()
+    invitations_list = session.query(friends_invitations.FriendsInv).filter(
+        friends_invitations.FriendsInv.id_second_user == current_user.id).all()
     invitations = []
     for invitation in invitations_list:
         friend_id = invitation.id_first_user if invitation.id_first_user != current_user.id else invitation.id_second_user
@@ -178,6 +179,13 @@ def user_chat(chat_id):
         session.commit()
         return redirect(f"/chat/{chat_id}")
     return render_template("user_chat.html", chat=chat, messages=messages, form=form)
+
+
+@app.route("/send", methods=["POST"])
+@login_required
+def send():
+    print(request.form["text"])
+    return jsonify({"text": request.form["text"]})
 
 
 if __name__ == "__main__":
