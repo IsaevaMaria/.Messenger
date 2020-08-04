@@ -16,6 +16,7 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
+    session = db_session.create_session()
     return session.query(users.Users).get(user_id)
 
 
@@ -36,6 +37,7 @@ def index():
 
 @app.route("/registration", methods=('GET', 'POST'))
 def registration():
+    session = db_session.create_session()
     form = RegistrationForm()
     if form.validate_on_submit():
         if form.password.data == "" or form.login.data == "" or form.confirm_password.data == "" \
@@ -63,6 +65,7 @@ def logout():
 
 @app.route("/login", methods=('GET', 'POST'))
 def login():
+    session = db_session.create_session()
     form = LoginForm()
     if form.validate_on_submit():
         if form.password.data == "" or form.login.data == "":
@@ -80,6 +83,7 @@ def login():
 @app.route("/friends")
 @login_required
 def friend():
+    session = db_session.create_session()
     friends_list = session.query(friends.Friends).filter(
         or_(friends.Friends.id_first_user == current_user.id,
             friends.Friends.id_second_user == current_user.id)).all()
@@ -101,6 +105,7 @@ def friend():
 @app.route("/user/<int:user_id>")
 @login_required
 def user_page(user_id):
+    session = db_session.create_session()
     user = session.query(users.Users).get(user_id)
     if user is None:
         return render_template("error_handler.html", message="Пользователя с таким ID не существует")
@@ -131,6 +136,7 @@ def account():
 @app.route("/add_friend/<int:user_id>")
 @login_required
 def add_friend(user_id):
+    session = db_session.create_session()
     past = request.headers.environ["HTTP_REFERER"]
     new_friend_invitation = friends_invitations.FriendsInv()
     new_friend_invitation.id_first_user = current_user.id
@@ -147,6 +153,7 @@ def accept_friend(invitation_id):
         past = request.headers.environ["HTTP_REFERER"]
     except KeyError:
         return render_template("error_handler.html", message="У вас недостаточно прав")
+    session = db_session.create_session()
     invitation = session.query(friends_invitations.FriendsInv).get(invitation_id)
     if invitation is not None and invitation.id_first_user != current_user:
         new_friendship = friends.Friends()
@@ -167,6 +174,7 @@ def user_chats():
 @app.route("/chat/<int:chat_id>", methods=["POST", "GET"])
 @login_required
 def user_chat(chat_id):
+    session = db_session.create_session()
     chat = session.query(chats.Chats).get(chat_id)
     return render_template("user_chat.html", chat=chat)
 
@@ -174,6 +182,7 @@ def user_chat(chat_id):
 @app.route("/send/<int:chat_id>", methods=["POST"])
 @login_required
 def send(chat_id):
+    session = db_session.create_session()
     new_message = chats_messages.ChatsMessages()
     new_message.id_chat = chat_id
     new_message.text = request.form["text"]
@@ -186,6 +195,7 @@ def send(chat_id):
 @app.route("/get_messages/<int:chat_id>/<int:page>")
 @login_required
 def get_messages(chat_id, page):
+    session = db_session.create_session()
     chat = session.query(chats.Chats).get(chat_id)
     messages = sorted(chat.chats_messages, key=lambda x: x.date)[::-1][(page - 1) * 10: page * 10]
     return jsonify({'messages': [
@@ -196,6 +206,7 @@ def get_messages(chat_id, page):
 @app.route("/delete_message", methods=["DELETE"])
 @login_required
 def delete_message():
+    session = db_session.create_session()
     message = session.query(chats_messages.ChatsMessages).get(request.form["message_id"])
     print(message.text)
     session.delete(message)
@@ -205,7 +216,6 @@ def delete_message():
 
 if __name__ == "__main__":
     db_session.global_init("db/database.sqlite")
-    session = db_session.create_session()
     app.register_blueprint(api.api)
-    #  app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    # app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
     app.run(host="127.0.0.1", port=8080)
