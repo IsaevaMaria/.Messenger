@@ -188,7 +188,19 @@ def send(chat_id):
 def get_messages(chat_id, page):
     chat = session.query(chats.Chats).get(chat_id)
     messages = sorted(chat.chats_messages, key=lambda x: x.date)[::-1][(page - 1) * 10: page * 10]
-    return jsonify({'messages': [{'date': message.date.strftime("%m-%d-%Y %H:%M:%S"), 'text': message.text} for message in messages[::-1]]})
+    return jsonify({'messages': [
+        {'id': message.id, 'date': message.date.strftime("%m-%d-%Y %H:%M:%S"), 'text': message.text} for message in
+        messages[::-1]]})
+
+
+@app.route("/delete_message", methods=["DELETE"])
+@login_required
+def delete_message():
+    message = session.query(chats_messages.ChatsMessages).get(request.form["message_id"])
+    print(message.text)
+    session.delete(message)
+    session.commit()
+    return jsonify({'success': 'OK'})
 
 
 if __name__ == "__main__":
