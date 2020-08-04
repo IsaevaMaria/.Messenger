@@ -168,8 +168,7 @@ def user_chats():
 @login_required
 def user_chat(chat_id):
     chat = session.query(chats.Chats).get(chat_id)
-    messages = sorted(chat.chats_messages, key=lambda x: x.date)
-    return render_template("user_chat.html", chat=chat, messages=messages)
+    return render_template("user_chat.html", chat=chat)
 
 
 @app.route("/send/<int:chat_id>", methods=["POST"])
@@ -181,17 +180,15 @@ def send(chat_id):
     new_message.date = datetime.datetime.utcnow()
     session.add(new_message)
     session.commit()
-    print(request.form["text"])
-    return jsonify({"text": request.form["text"]})
+    return jsonify({"success": "OK"})
 
 
-@app.route("/get_messages/<int:chat_id>")
+@app.route("/get_messages/<int:chat_id>/<int:page>")
 @login_required
-def get_messages(chat_id):
+def get_messages(chat_id, page):
     chat = session.query(chats.Chats).get(chat_id)
-    messages = sorted(chat.chats_messages, key=lambda x: x.date)
-    print([{'date': message.date.strftime("%m-%d-%Y %H:%M:%S"), 'text': message.text} for message in messages])
-    return jsonify({'messages': [{'date': message.date.strftime("%m-%d-%Y %H:%M:%S"), 'text': message.text} for message in messages]})
+    messages = sorted(chat.chats_messages, key=lambda x: x.date)[::-1][(page - 1) * 10: page * 10]
+    return jsonify({'messages': [{'date': message.date.strftime("%m-%d-%Y %H:%M:%S"), 'text': message.text} for message in messages[::-1]]})
 
 
 if __name__ == "__main__":

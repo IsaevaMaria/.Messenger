@@ -5,9 +5,6 @@
 <h1>{{ chat.name }}</h1>
 <div id="messages_box">
 	<div id="messages">
-		{% for message in messages %}
-		<p> {{ message.text }} - {{ message.date.strftime("%m-%d-%Y %H:%M:%S") }} </p>
-		{% endfor %}
 	</div>
 </div>
 <form id="send_message" novalidate method="post" enctype = "multipart/form-data">
@@ -15,7 +12,7 @@
     <input type="text" id="text_input" placeholder="ПИШИ ТУТ!!!">
     <input type="submit">
 </form>
-<div id="error"></div>
-<div id="send_text"></div>
-<script src="{{ url_for('static', filename='js/chat.js', v=9) }}"></script>
+<button id="previous">Previous page</button>
+<button id="next">Next page</button>
+<script src="{{ url_for('static', filename='js/chat.js', v=15) }}"></script>
 {% endblock %}
