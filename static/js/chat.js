@@ -39,13 +39,15 @@ $(document).ready(function() {
 
     update_chat();
 	setInterval(update_chat, 500);
+
 	$('#next').on('click', function() {
 	    if (current_page > 1) { current_page--; }
 	});
 	$('#previous').on('click', function() {
 	    current_page++;
 	});
-	$("#send_message").on("submit", function(event) {
+	$("#submit").on('click', function(event) {
+
 		$.ajax('/send/' + $('#chat_id').attr("value"), {
 			data : {
 				text: $("#text_input").val()
@@ -57,6 +59,8 @@ $(document).ready(function() {
 				}
 			}
 		});
+
+		$('#text_input').val("");
 		event.preventDefault();
 	});
 });

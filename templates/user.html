@@ -14,7 +14,7 @@
             {% if sender is false %}
             <a href="/accept_friend/{{ invitation.id }}"><input type="submit" value="Принять заявку в друзья" class="button-primary"></a>
             {% endif %}
-        {% else %}
+        {% elif current_user.id != user.id %}
             <a href="/add_friend/{{ user.id }}"><input type="submit" value="Добавить в друзья" class="button-primary"></a>
         {% endif %}
     {% endif %}

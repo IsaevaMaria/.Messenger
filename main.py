@@ -59,6 +59,10 @@ def registration():
 @app.route("/logout")
 @login_required
 def logout():
+    session = db_session.create_session()
+    user = session.query(users.Users).get(current_user.id)
+    user.status = False
+    session.commit()
     logout_user()
     return redirect("/")
 
@@ -75,6 +79,8 @@ def login():
             return render_template("login.html", form=form, message="Пользователь не найден")
         if not user.check_password(form.password.data):
             return render_template("login.html", form=form, message="Неправильный пароль")
+        user.status = True
+        session.commit()
         login_user(user, remember=form.remember.data)
         return redirect("/")
     return render_template("login.html", form=form, message="")
@@ -91,10 +97,11 @@ def friend():
                     else pair.id_second_user for pair in friends_list]
     friends_list = [session.query(users.Users).get(user) for user in friends_list]
     invitations_list = session.query(friends_invitations.FriendsInv).filter(
-        friends_invitations.FriendsInv.id_second_user == current_user.id).all()
+        and_(friends_invitations.FriendsInv.id_first_user != current_user.id,
+             friends_invitations.FriendsInv.id_second_user == current_user.id)).all()
     invitations = []
     for invitation in invitations_list:
-        friend_id = invitation.id_first_user if invitation.id_first_user != current_user.id else invitation.id_second_user
+        friend_id = invitation.id_first_user
         friend_name = session.query(users.Users).get(friend_id).name
         invitations += [{"id": invitation.id, "name": friend_name}]
     if len(invitations) == 0:
@@ -124,13 +131,13 @@ def user_page(user_id):
         sender = True if invitation.id_first_user == current_user.id else False
     else:
         sender = False
-    return render_template("user.html", user=user, pair=pair, invitation=invitation, sender=sender)
+    return render_template("user.html", user=user, pair=pair, invitation=invitation, sender=sender, current_user_id=current_user.id)
 
 
 @app.route("/account")
 @login_required
 def account():
-    pass  # TODO
+    return redirect("/user/" + str(current_user.id))
 
 
 @app.route("/add_friend/<int:user_id>")
@@ -176,7 +183,7 @@ def user_chats():
 def user_chat(chat_id):
     session = db_session.create_session()
     chat = session.query(chats.Chats).get(chat_id)
-    return render_template("user_chat.html", chat=chat)
+    return render_template("user_chat.html", chat=chat, members=[(user.id, user.name) for user in chat.users])
 
 
 @app.route("/send/<int:chat_id>", methods=["POST"])
