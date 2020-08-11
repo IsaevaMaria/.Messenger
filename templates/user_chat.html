@@ -1,17 +1,26 @@
 {% extends "base.html" %}
-
 {% block content %}
 
-<h1>{{ chat.name }}</h1>
+<h6 style="text-align:left;"> Беседа {{ chat.name }}</h6>
 <div class="container">
-    <div class="row">
-        <div class="col-sm">
-            <div id="members"><h1>Участникик чата</h1>
-                {% for member in members %}
-                    <a class="btn btn-primary" href="{{ url_for('user_page', user_id=member[0]) }}">{{ member[1] }}</a>
+    <div class="row" style="margin: 10 px;">
+<div class="btn-group .btn-group-sm" >
+    <a class="btn btn-secondary" href="#">Rename chat</a>
+    <a class="btn btn-secondary" href="/add_user/{{ chat.id }}">Add user</a>
+    <div class="btn-group">
+    <a class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+       User in chat
+    </a>
+    <div class="dropdown-menu" id="members">
+        {% for member in members %}
+        <a class="dropdown-item" href="{{ url_for('user_page', user_id=member[0]) }}">{{ member[1] }}</a>
                 {% endfor %}
-            </div>
-        </div>
+    </div>
+</div>
+</div>
+    </div>
+
+   <div class="row" style="margin-top: 100px;">
         <div class="col-sm">
             <div id="messages_box">
                 <div id="messages">
@@ -21,10 +30,17 @@
                     <input type="text" id="text_input" placeholder="ПИШИ ТУТ!!!">
                     <input id="submit" type="submit">
                 </div>
-                <button id="previous">Previous page</button>
-                <button id="next">Next page</button>
             </div>
         </div>
+    </div>
+    <div class = "row"  style="margin-top:20px;">
+        <ul class="pagination">
+  <li class="page-item"><button id="previous" class="page-link" href="#">Previous</button></li>
+  <li class="page-item"><a class="page-link" href="#">1</a></li>
+  <li class="page-item"><a class="page-link" href="#">2</a></li>
+  <li class="page-item"><a class="page-link" href="#">3</a></li>
+  <li class="page-item"><button id="next" class="page-link" href="#">Next</button></li>
+</ul>
     </div>
 </div>
 <script src="{{ url_for('static', filename='js/chat.js', v=35) }}"></script>

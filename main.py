@@ -221,6 +221,35 @@ def delete_message():
     return jsonify({'success': 'OK'})
 
 
+@app.route("/add_user/<int:chat_id>", methods=["GET", "POST"])
+@login_required
+def add_user(chat_id):
+    if request.method == "GET":
+        session = db_session.create_session()
+        chat = session.query(chats.Chats).get(chat_id)
+        user_friends = session.query(friends.Friends).filter(or_(friends.Friends.id_first_user == current_user.id,
+                                                            friends.Friends.id_second_user == current_user.id))
+        friends_ids = [pair.id_first_user if pair.id_first_user != current_user.id else pair.id_second_user for pair in user_friends]
+        user_friends = []
+        for id in friends_ids:
+            user = session.query(users.Users).get(id)
+            if user not in chat.users:
+                user_friends += user
+
+        return render_template("add_user.html", friends=[(user.id, user.name) for user in user_friends], chat_id=chat_id, empty=False if len(user_friends) else True)
+
+    elif request.method == "POST":
+        print(request.form)
+        add_user_id = request.form["user_id"]
+        session = db_session.create_session()
+        user = session.query(users.Users).get(add_user_id)
+        chat = session.query(chats.Chats).get(chat_id)
+        user.chats.append(chat)
+        session.add(user)
+        session.commit()
+        return redirect(f"/chat/{chat_id}")
+
+
 if __name__ == "__main__":
     db_session.global_init("db/database.sqlite")
     app.register_blueprint(api.api)
