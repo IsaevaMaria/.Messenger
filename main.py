@@ -234,7 +234,7 @@ def add_user(chat_id):
         for id in friends_ids:
             user = session.query(users.Users).get(id)
             if user not in chat.users:
-                user_friends += user
+                user_friends.append(user)
 
         return render_template("add_user.html", friends=[(user.id, user.name) for user in user_friends], chat_id=chat_id, empty=False if len(user_friends) else True)
 
@@ -248,6 +248,31 @@ def add_user(chat_id):
         session.add(user)
         session.commit()
         return redirect(f"/chat/{chat_id}")
+
+
+@app.route("/add_chat")
+@login_required
+def add_chat():
+    session = db_session.create_session()
+    new_chat = chats.Chats(
+        name="new_chat",
+        author=current_user.id
+    )
+    new_chat.users.append(session.query(users.Users).get(current_user.id))
+    session.add(new_chat)
+    session.commit()
+    return redirect("/chats")
+
+
+@app.route("/rename_chat/<int:chat_id>", methods=["POST"])
+@login_required
+def rename_chat(chat_id):
+    session = db_session.create_session()
+    chat = session.query(chats.Chats).get(chat_id)
+    chat.name = request.form["new_name"]
+    session.add(chat)
+    session.commit()
+    return jsonify({'success': 'OK'})
 
 
 if __name__ == "__main__":

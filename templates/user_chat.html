@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h6 style="text-align:left;"> Беседа {{ chat.name }}</h6>
+<h6 style="text-align:left;" id="chat_name"> Беседа {{ chat.name }}</h6>
 <div class="container">
     <div class="row" style="margin: 10 px;">
 <div class="btn-group .btn-group-sm" >
-    <a class="btn btn-secondary" href="#">Rename chat</a>
+    <button class="btn btn-secondary" id="rename_chat">Rename chat</button>
+    <div id='rename_form' style="display: none;"><input id='new_name' type='text'><button id='submit_rename'>Изменить</button><button id='cancel'>Отмена</button></div>
     <a class="btn btn-secondary" href="/add_user/{{ chat.id }}">Add user</a>
     <div class="btn-group">
     <a class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
@@ -43,5 +44,6 @@
 </ul>
     </div>
 </div>
+<script src="{{ url_for('static', filename='js/chat_settings.js', v=8) }}"></script>
 <script src="{{ url_for('static', filename='js/chat.js', v=35) }}"></script>
 {% endblock %}
