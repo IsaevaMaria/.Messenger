@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row" >
+<a class="btn btn-secondary" style="min_width: 50px;" href="/add_chat">+</a>
+<div class="btn-group">
+{% for chat in chats %}
+    <div class =".col-sm-6">
+        <a class="btn btn-secondary" style="margin:50px;" href="/chat/{{ chat.id }}">{{ chat.name }}</a>
+    </div>
+{% endfor %}
+</div>
+    </div>
+</div>
+{% endblock %}

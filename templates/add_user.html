@@ -1,0 +1,19 @@
+{% extends "base.html"%}
+
+{% block content %}
+    {% if empty %}
+        <p>Очень жаль, но у вас слишком мало друзей, чтобы добавить в чат ещё(((</p>
+    {% else %}
+        <form method="post">
+            <div class="form-group">
+                <label for="friends_select">Example select</label>
+                <select class="form-control" id="friends_select" name="user_id">
+                    {% for friend in friends %}
+                        <option value="{{ friend[0] }}">{{ friend[1] }}</option>
+                    {% endfor %}
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary mb-2">Add</button>
+        </form>
+    {% endif %}
+{% endblock %}
