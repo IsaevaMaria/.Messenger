@@ -239,23 +239,40 @@ def add_user(chat_id):
         return render_template("add_user.html", friends=[(user.id, user.name) for user in user_friends], chat_id=chat_id, empty=False if len(user_friends) else True)
 
     elif request.method == "POST":
-        print(request.form)
-        add_user_id = request.form["user_id"]
+        add_users_ids = request.form.getlist("user_ids[]")
         session = db_session.create_session()
-        user = session.query(users.Users).get(add_user_id)
+        add_users = [session.query(users.Users).get(int(id)) for id in add_users_ids]
         chat = session.query(chats.Chats).get(chat_id)
-        user.chats.append(chat)
-        session.add(user)
+        for user in add_users:
+            chat.users.append(user)
+        session.add(chat)
         session.commit()
-        return redirect(f"/chat/{chat_id}")
+        return {'success': "OK"}
 
+'''
+@app.route("/add_chat", methods=["GET", "POST"])
+@login_required
+def add_chat():
+    if request.method == "POST":
+        session = db_session.create_session()
+        new_chat = chats.Chats(
+            name=request.form["chat_name"],
+            author=current_user.id
+        )
+        users_in_chat = [session.query(users.Users).get(user_id) for user_id in request.form["user_ids"]]
+        for user in users_in_chat:
+            new_chat.users.append(user)
+        session.add(new_chat)
+        session.commit()
+        return redirect("/chats")
+'''
 
-@app.route("/add_chat")
+@app.route("/add_chat", methods=["GET", "POST"])
 @login_required
 def add_chat():
     session = db_session.create_session()
     new_chat = chats.Chats(
-        name="new_chat",
+        name='new_chat',
         author=current_user.id
     )
     new_chat.users.append(session.query(users.Users).get(current_user.id))
